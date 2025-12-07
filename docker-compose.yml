@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  leverage.api:
+    build: .
+    container_name: leverage_api_container
+    ports:
+      - "8000:8000"
+
+volumes:
+  leverage_api_db_data:
