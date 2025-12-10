@@ -1,5 +1,8 @@
 fastapi
 uvicorn
 pydantic
+pydantic[email]
 pymysql
 sqlalchemy
+alembic
+bcrypt

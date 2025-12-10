@@ -13,7 +13,7 @@ services:
       - DB_PASSWORD=${DB_PASSWORD}
       - DB_DATABASE=${DB_DATABASE}
     volumes:
-      - ./app:/app/app
+      - ./app:/app
     depends_on:
       leverage_db:
         condition: service_healthy
