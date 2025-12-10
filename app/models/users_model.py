@@ -13,6 +13,7 @@ class User(Base):
     leverage_tag = Column(String(10), nullable=True)
     email = Column(String(100), unique=True, index=True, nullable=False)
     phone = Column(String(15), unique=True, nullable=False)
+    password = Column(String(100), nullable=False)
     date_of_birth = Column(Date, nullable=True)
     address = Column(String(256), nullable=True)
     #nationality = Column(Enum(Nationality))

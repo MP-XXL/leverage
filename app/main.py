@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from models.base import Base
 from database.database_main import engine
+from routes import users_routes
 import time
 import logging
 
@@ -11,6 +12,8 @@ app = FastAPI(
     title = "Leverage",
     version = "0.0.1 Beta"
 )
+
+app.include_router(users_routes.router)
 
 @app.get("/")
 def home():
