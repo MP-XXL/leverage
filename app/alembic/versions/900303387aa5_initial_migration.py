@@ -1,8 +1,8 @@
-"""initial migration
+"""Initial migration
 
-Revision ID: c41086a00954
+Revision ID: 900303387aa5
 Revises: 
-Create Date: 2025-12-10 22:20:15.799813
+Create Date: 2025-12-11 21:40:59.777039
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c41086a00954'
+revision: str = '900303387aa5'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -25,13 +25,13 @@ def upgrade() -> None:
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('first_name', sa.String(length=64), nullable=False, max_length=64),
     sa.Column('last_name', sa.String(length=64), nullable=False, max_length=64),
-    sa.Column('leverage_tag', sa.String(length=10), nullable=True),
+    sa.Column('image', sa.String(length=150), nullable=True),
     sa.Column('email', sa.String(length=100), nullable=False),
     sa.Column('phone', sa.String(length=15), nullable=False),
     sa.Column('password', sa.String(length=100), nullable=False),
     sa.Column('date_of_birth', sa.Date(), nullable=True),
     sa.Column('address', sa.String(length=256), nullable=True),
-    sa.Column('verification', sa.Enum('VERIFIED', 'UNVERIFIED', name='verification'), nullable=False),
+    sa.Column('verification', sa.Enum('verified', 'pending', 'unverified', name='verification'), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.PrimaryKeyConstraint('id'),

@@ -1,9 +1,10 @@
 from fastapi import Depends, Request, status, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-from sqlalchemy.orm import
+from sqlalchemy.orm import Session
 from database.database_main import get_db
 from datetime import datetime
 from models.users_model import User
+from jose import jwt, JWTError
 from auth.jwt import SECRET_KEY, ALGORITHM
 
 
@@ -38,17 +39,17 @@ class JWTBearer(HTTPBearer):   #The  bearer class handles decoding by base64
 
             return user
         except Exception as e:
-            self.raiseHTTPException(f"JWT verification failed. Login sess ion expired:")
+            self.raiseHTTPException(f"JWT verification failed. Login session expired: {e}")
     
-    def verify_access_token(token: str):
+    def verify_access_token(self, token: str):
         try:
             return jwt.decode(token, SECRET_KEY, ALGORITHM)
         except JWTError as e:
-            raise
+           raise
 
     def raiseHTTPException(self, e, status=status.HTTP_403_FORBIDDEN):
         raise HTTPException(
-                    status_code = status
+                    status_code = status,
                     detail = {
                         "message": e,
                         "timestamp": f"{datetime.now()}"

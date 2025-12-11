@@ -10,7 +10,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True, nullable=False)
     first_name = Column(String(64), max_length=64, nullable=False)
     last_name = Column(String(64), max_length=64, nullable=False)
-    leverage_tag = Column(String(10), nullable=True)
+    image = Column(String(150), nullable=True)
     email = Column(String(100), unique=True, index=True, nullable=False)
     phone = Column(String(15), unique=True, nullable=False)
     password = Column(String(100), nullable=False)

@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from models.base import Base
 from database.database_main import engine
-from routes import users_routes, auth_route
+from routes import users_routes, auth_route, verification_route
 import time
 import logging
 
@@ -15,6 +15,7 @@ app = FastAPI(
 
 app.include_router(users_routes.router)
 app.include_router(auth_route.router)
+app.include_router(verification_route.router)
 
 @app.get("/")
 def home():
