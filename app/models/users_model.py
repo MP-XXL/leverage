@@ -17,6 +17,6 @@ class User(Base):
     date_of_birth = Column(Date, nullable=True)
     address = Column(String(256), nullable=True)
     #nationality = Column(Enum(Nationality))
-    verification = Column(Enum(Verification), default=Verification.UNVERIFIED, nullable=False)
+    verification = Column(Enum(Verification), default=Verification.unverified, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
