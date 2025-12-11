@@ -21,3 +21,4 @@ def create_access_token(claims: dict, expires_delta: Optional[timedelta] = None)
 
     except JWTError as e:
         raise e
+

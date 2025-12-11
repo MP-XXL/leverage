@@ -34,3 +34,7 @@ def register_user(user: User, db: Session=Depends(get_db)):
     db.refresh(new_user)
 
     return new_user
+
+
+# @router.post("/verifications", status_code=status.HTTP_200_OK)
+# async def verify_user(image: UploadFile =File(...))
