@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from database.database_main import get_db
-from schema.users_schema import User, UserResponse
+from schemas.users_schema import User, UserResponse
 from models import users_model
 import bcrypt
 
@@ -14,11 +14,11 @@ router = APIRouter(
 
 @router.post("/users", status_code=status.HTTP_201_CREATED, response_model=UserResponse)
 def register_user(user: User, db: Session=Depends(get_db)):
-    user_exists = db.query(users_model.User).filter(users_model.User.email == user.email).first()
+    user_exists = db.query(users_model.User).filter((users_model.User.email == user.email) | (user.phone == users_model.User.phone)).first()
     if user_exists:
         raise HTTPException(
             status_code = status.HTTP_409_CONFLICT,
-            detail = "email already exists"
+            detail = "email or phone already exists"
             )
 
     salts = bcrypt.gensalt(rounds=12)
@@ -33,7 +33,4 @@ def register_user(user: User, db: Session=Depends(get_db)):
     db.commit()
     db.refresh(new_user)
 
-    return {
-        "message": "Registration Sucessful!",
-        "data": new_user
-    }
+    return new_user

@@ -9,11 +9,18 @@ class User(BaseModel):
     first_name: str = Field(max_length=64)
     last_name: str = Field(max_length=64)
     email: EmailStr
-    phone: str = Field(min_length=11)
+    phone: str = Field(min_length=11, pattern=r"\d")
     password: str = Field(min_length=6, max_length=50)
     confirm_password: str = Field(min_length=6, max_length=50)
     date_of_birth: date
     address: str = Field(min_length=10, max_length=150)
+
+
+    @validator('phone')
+    def phone_is_valid_numeric_value(cls, value):
+        if value.isdigit() is not True:
+            raise ValueError('phone number must be digits')
+        return value
 
 
     @validator('password')
