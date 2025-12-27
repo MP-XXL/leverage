@@ -2,7 +2,9 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from database.database_main import get_db
 from schemas.users_schema import User, UserResponse
-from models import users_model
+from schemas.accounts_schema import CreateTag
+from middlewares.auth import AuthMiddleware
+from models import users_model, accounts_model
 import bcrypt
 
 
@@ -36,5 +38,35 @@ def register_user(user: User, db: Session=Depends(get_db)):
     return new_user
 
 
-# @router.post("/verifications", status_code=status.HTTP_200_OK)
-# async def verify_user(image: UploadFile =File(...))
+@router.post("/tags/users", status_code=status.HTTP_201_CREATED)
+def create_leverage_tag(tag: CreateTag, current_user=Depends(AuthMiddleware), db: Session=Depends(get_db)):
+    if current_user.verification.value != "verified":
+         raise HTTPException(
+            status_code = status.HTTP_401_UNAUTHORIZED,
+            detail = "User is not verified!"
+            )
+    get_account = db.query(accounts_model.Account).filter(accounts_model.Account.user_id == current_user.id).first()
+    if not get_account:
+        new_account = accounts_model.Account(
+            user_id = current_user.id,
+            leverage_tag = tag.leverage_tag.lower()
+            )
+
+        db.add(new_account)
+        db.commit()
+        db.refresh(new_account)
+
+        return new_account
+
+    if get_account:
+        get_account.leverage_tag = tag.leverage_tag.lower()
+
+        db.add(get_account)
+        db.commit()
+        db.refresh(get_account)
+
+        return get_account
+
+    
+
+    

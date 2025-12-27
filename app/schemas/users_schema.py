@@ -88,7 +88,6 @@ class User(BaseModel):
         return value
 
 
-
 class UserResponse(BaseModel):
     first_name: str
     last_name: str
