@@ -67,6 +67,8 @@ def create_leverage_tag(tag: CreateTag, current_user=Depends(AuthMiddleware), db
 
         return get_account
 
-    
 
-    
+@router.delete("/users", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(current_user=Depends(AuthMiddleware), db: Session=Depends(get_db)):
+    db.delete(current_user)
+    db.commit()
