@@ -45,6 +45,14 @@ def create_leverage_tag(tag: CreateTag, current_user=Depends(AuthMiddleware), db
             status_code = status.HTTP_401_UNAUTHORIZED,
             detail = "User is not verified!"
             )
+
+    tag_exists = db.query(accounts_model.Account).filter(accounts_model.Account.leverage_tag == tag.leverage_tag.lower()).first()
+    if tag_exists:
+        raise HTTPException(
+            status_code = status.HTTP_409_CONFLICT,
+            detail= f" \'{tag.leverage_tag}\' leverage tag already exists"
+        )
+
     get_account = db.query(accounts_model.Account).filter(accounts_model.Account.user_id == current_user.id).first()
     if not get_account:
         new_account = accounts_model.Account(

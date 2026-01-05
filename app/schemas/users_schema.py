@@ -46,7 +46,7 @@ class User(BaseModel):
     def check_first_name(cls, value):
         if any(char.isdigit() for char in value):
             raise HTTPException(
-                status_code = status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code = status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail = 'Name can not contain numbers'
                 )
         return value
@@ -55,7 +55,7 @@ class User(BaseModel):
     def check_last_name(cls, value):
         if any(char.isdigit() for char in value):
             raise HTTPException(
-                status_code = status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code = status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail = 'Name can not contain numbers'
                 )
         return value
@@ -64,7 +64,7 @@ class User(BaseModel):
     def first_name(cls, value):
         if value.isspace() is True:
             raise HTTPException(
-                status_code = status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code = status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail = 'Name can not be blank!'
                 )
         return value
@@ -73,7 +73,7 @@ class User(BaseModel):
     def validate_last_name(cls, value):
         if value.isspace() is True:
             raise HTTPException(
-                status_code = status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code = status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail = 'Name can not be blank!'
                 )
         return value
@@ -82,7 +82,7 @@ class User(BaseModel):
     def validate_name(cls, value):
         if value > date.today():
             raise HTTPException(
-                status_code = status.HTTP_422_UNPROCESSABLE_ENTITY,
+                status_code = status.HTTP_422_UNPROCESSABLE_CONTENT,
                 detail = 'Invalid date!'
                 )
         return value
