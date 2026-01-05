@@ -10,3 +10,7 @@ class AccountStatus(enum.Enum):
     dormant = "dormant"
     active = "active"
     blocked = "blocked"
+
+class TransactionType(enum.Enum):
+    credit = "credit"
+    debit = "debit"

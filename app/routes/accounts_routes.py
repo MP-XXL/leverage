@@ -4,7 +4,8 @@ from database.database_main import get_db
 # from schemas.users_schema import User, UserResponse
 from schemas.accounts_schema import UserTransaction, UserTransactionResponse
 from middlewares.auth import AuthMiddleware
-from models import users_model, accounts_model
+from models import users_model, accounts_model, transactions_model
+from enums import TransactionType
 from datetime import datetime
 
 class UserNotVerfiedError(Exception):
@@ -46,6 +47,18 @@ def leverage_tag_transfers(transaction: UserTransaction, current_user=Depends(Au
         db.add(user_account)
         db.add(receiver_account)
         db.commit()
+
+        sender_transaction = transactions_model.Transaction(
+            sender_acc_id = user_account.id,
+            amount = transaction.amount,
+            receiver_acc_id = receiver_account.id,
+            transaction_type = TransactionType.debit,
+            description = transaction.description
+        )
+
+        db.add(sender_transaction)
+        db.commit()
+        db.refresh(sender_transaction)
 
         return {
             "success": True,

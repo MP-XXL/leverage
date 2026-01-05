@@ -33,6 +33,7 @@ class CreateTag(BaseModel):
 class UserTransaction(BaseModel):
     amount: Decimal = Field(ge=1, max_digits=10, decimal_places=2)
     leverage_tag: str = Field(min_length=5, max_length=20)
+    description: str = Field(max_length=200)
 
     @validator("amount")
     def check_amount(cls, value):
@@ -46,4 +47,5 @@ class UserTransaction(BaseModel):
 class UserTransactionResponse(BaseModel):
     amount: float = Field(ge=1)
     leverage_tag: str = Field(min_length=5, max_length=20)
+    description: str = Field(max_length=200)
  

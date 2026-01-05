@@ -1,5 +1,6 @@
 from sqlalchemy import Column, String, Enum, Integer,DECIMAL, DateTime, ForeignKey, func, Date
 from .base import Base
+from sqlalchemy.orm import relationship
 from enums import AccountStatus
 
 
@@ -16,3 +17,6 @@ class Account(Base):
     acc_status = Column(Enum(AccountStatus), default=AccountStatus.active, nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
+
+    sender_transaction = relationship("Transaction", foreign_keys="[Transaction.sender_acc_id]", cascade="all, delete", backref="accounts")
+    receiver_transaction = relationship("Transaction", foreign_keys="[Transaction.receiver_acc_id]", cascade="all, delete", backref="receiver")
