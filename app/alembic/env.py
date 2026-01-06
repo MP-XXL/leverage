@@ -8,6 +8,8 @@ from models.base import Base
 from alembic import context
 
 from models.users_model import User
+from models.accounts_model import Account
+from models.transactions_model import Transaction
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
