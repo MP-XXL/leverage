@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException, status, Depends
 from sqlalchemy.orm import Session
 from database.database_main import get_db
 # from schemas.users_schema import User, UserResponse
-from schemas.accounts_schema import UserTransaction, UserTransactionResponse
+from schemas.accounts_schema import UserTransaction, UserTransactionResponse, FundUser
 from middlewares.auth import AuthMiddleware
 from models import users_model, accounts_model, transactions_model
 from enums import TransactionType
@@ -85,6 +85,25 @@ def leverage_tag_transfers(transaction: UserTransaction, current_user=Depends(Au
         return "Your account balance is lower than sending amount"
     except Exception as e:
         return f"Oops! something went wrong {e}"
+
+@router.post("/fund", status_code=status.HTTP_200_OK)
+def fund_account(transaction: FundUser, current_user=Depends(AuthMiddleware), db: Session=Depends(get_db)):
+    account_exists = db.query(accounts_model.Account).filter(accounts_model.Account.user_id == current_user.id).first()
+    if not account_exists:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "User account not found. Create new account or leverage tag"
+        )
+    
+    account_exists.acc_balance += transaction.amount
+
+    db.add(account_exists)
+    db.commit()
+
+    return {
+        "message": "Account funded successfully!",
+        "amount": transaction.amount
+    }
 
 @router.get("/history", status_code=status.HTTP_200_OK)
 def get_account_history(current_user=Depends(AuthMiddleware), db: Session=Depends(get_db)):

@@ -44,6 +44,19 @@ class UserTransaction(BaseModel):
             )
         return value
 
+class FundUser(BaseModel):
+    amount: Decimal = Field(ge=1, max_digits=10, decimal_places=2)
+
+    @validator("amount")
+    def check_amount(cls, value):
+        if value < 1:
+            raise HTTPException(
+                status_code = status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail = "Amount can not be less than 1"
+            )
+        return value
+
+
 class UserTransactionResponse(BaseModel):
     amount: float = Field(ge=1)
     leverage_tag: str = Field(min_length=5, max_length=20)
