@@ -10,7 +10,7 @@ from datetime import datetime
 
 router = APIRouter(
     prefix="/leverage",
-    tags=["Users"]
+    tags=["Admin"]
 )
 
 
@@ -89,7 +89,7 @@ def unblock_user(user_id: int, current_user=Depends(AuthMiddleware), db: Session
 
 
 @router.get("/transactions/admin", status_code=status.HTTP_200_OK)
-def get_all_users(current_user=Depends(AuthMiddleware), db: Session=Depends(get_db)):
+def get_all_users_txn(current_user=Depends(AuthMiddleware), db: Session=Depends(get_db)):
     try:
         if current_user.role != "admin":
             admin_access_error()
