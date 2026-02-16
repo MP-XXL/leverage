@@ -10,6 +10,7 @@ from alembic import context
 from models.users_model import User
 from models.accounts_model import Account
 from models.transactions_model import Transaction
+from models.ledger_model import Ledger
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.

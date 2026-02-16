@@ -4,8 +4,8 @@ from database.database_main import get_db
 # from schemas.users_schema import User, UserResponse
 from schemas.accounts_schema import UserTransaction, UserTransactionResponse, FundUser
 from middlewares.auth import AuthMiddleware
-from models import users_model, accounts_model, transactions_model
-from enums import TransactionType
+from models import users_model, accounts_model, transactions_model, ledger_model
+from enums import TransactionType, Type
 from datetime import datetime
 
 class UserNotVerfiedError(Exception):
@@ -16,6 +16,8 @@ class InsufficientFundsError(Exception):
 class UserAccountStatusError(Exception):
     pass
 class ReceiverNotFoundError(Exception):
+    pass
+class ImproperFlowError(Exception):
     pass
 
 
@@ -41,6 +43,8 @@ def leverage_tag_transfers(transaction: UserTransaction, current_user=Depends(Au
         receiver_account = db.query(accounts_model.Account).filter(accounts_model.Account.leverage_tag == transaction.leverage_tag.lower()).first()
         if not receiver_account:
             raise ReceiverNotFoundError
+        if receiver_account.leverage_tag == user_account.leverage_tag:
+            raise ImproperFlowError
 
         user_account.acc_balance -= transaction.amount
         receiver_account.acc_balance += transaction.amount
@@ -48,24 +52,29 @@ def leverage_tag_transfers(transaction: UserTransaction, current_user=Depends(Au
         db.add(receiver_account)
         db.commit()
 
-        sender_transaction = transactions_model.Transaction(
+        user_transaction = transactions_model.Transaction(
             sender_acc_id = user_account.id,
             amount = transaction.amount,
             receiver_acc_id = receiver_account.id,
-            transaction_type = TransactionType.debit,
+            transaction_type = TransactionType.transfer,
             description = transaction.description
         )
 
-        # receiver_transaction = transactions_model.Transaction(
-        #     sender_acc_id = user_account.id,
-        #     amount = transaction.amount,
-        #     receiver_acc_id = receiver_account.id,
-        #     transaction_type = TransactionType.credit,
-        #     description = transaction.description
-        # )
+        sender_transaction = ledger_model.Ledger(
+            user_account = user_account.id,
+            amount = transaction.amount,
+            ledger_type = Type.debit,
+        )
 
+        receiver_transaction = ledger_model.Ledger(
+            user_account = receiver_account.id,
+            amount = transaction.amount,
+            ledger_type = Type.credit,
+        )
+
+        db.add(user_transaction)
         db.add(sender_transaction)
-        # db.add(receiver_transaction)
+        db.add(receiver_transaction)
         db.commit()
 
         return {
@@ -81,6 +90,8 @@ def leverage_tag_transfers(transaction: UserTransaction, current_user=Depends(Au
         return f"Dear, {current_user.first_name}, can not perform transaction. Your account has been blocked due to suspicious acitvity or inactivity"
     except UserNotVerfiedError:
         return f"Dear {current_user.first_name}, your account is yet to be verified"
+    except ImproperFlowError :
+        return "Can not send money to self! Try deposit"
     except InsufficientFundsError:
         return "Your account balance is lower than sending amount"
     except Exception as e:
@@ -107,13 +118,11 @@ def fund_account(transaction: FundUser, current_user=Depends(AuthMiddleware), db
 
 @router.get("/history", status_code=status.HTTP_200_OK)
 def get_account_history(current_user=Depends(AuthMiddleware), db: Session=Depends(get_db)):
-    user_account = db.query(accounts_model.Account).filter(accounts_model.Account.user_id == current_user.id).first()
-    if not user_account:
+    current_user_account = db.query(accounts_model.Account).filter(accounts_model.Account.user_id == current_user.id).first()
+    if not current_user_account:
         raise HTTPException(
             status_code = status.HTTP_404_NOT_FOUND,
             detail = "User account not found. Create a leverage tag or request for account number"
         )
-    transaction_history = db.query(transactions_model.Transaction).filter(
-        (transactions_model.Transaction.receiver_acc_id == user_account.id) | (transactions_model.Transaction.sender_acc_id == user_account.id)
-        ).all()
-    return transaction_history
+    transactions_history = db.query(ledger_model.Ledger).filter(ledger_model.Ledger.user_account == current_user_account.id).all()
+    return transactions_history

@@ -18,5 +18,6 @@ class Account(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now(), nullable=False)
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now(), nullable=False)
 
-    sender_transaction = relationship("Transaction", foreign_keys="[Transaction.sender_acc_id]", cascade="all, delete", backref="accounts")
-    receiver_transaction = relationship("Transaction", foreign_keys="[Transaction.receiver_acc_id]", cascade="all, delete", backref="receiver")
+    # sender_transaction = relationship("Transaction", foreign_keys="[Transaction.sender_acc_id]", cascade="all, delete", backref="accounts")
+
+    # ledger_transaction = relationship("Ledger", foreign_keys="[Ledger.user_account]", cascade="all, delete", backref="accounts")
