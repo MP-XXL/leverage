@@ -12,5 +12,12 @@ class AccountStatus(enum.Enum):
     blocked = "blocked"
 
 class TransactionType(enum.Enum):
+    deposit = "deposit"
+    withdrawal = "withdrawal"
+    transfer = "transfer"
+    card = "card"
+    charges = "charges"
+
+class Type(enum.Enum):
     credit = "credit"
     debit = "debit"
