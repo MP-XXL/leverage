@@ -126,3 +126,38 @@ def get_account_history(current_user=Depends(AuthMiddleware), db: Session=Depend
         )
     transactions_history = db.query(ledger_model.Ledger).filter(ledger_model.Ledger.user_account == current_user_account.id).all()
     return transactions_history
+
+
+@router.get("/debit/history", status_code=status.HTTP_200_OK)
+def get_debit_account_history(current_user=Depends(AuthMiddleware), db: Session=Depends(get_db)):
+    current_user_account = db.query(accounts_model.Account).filter(accounts_model.Account.user_id == current_user.id).first()
+    if not current_user_account:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "User account not found. Create a leverage tag or request for account number"
+        )
+    history = db.query(ledger_model.Ledger).filter(ledger_model.Ledger.user_account == current_user_account.id).all()
+    debit_history = []
+    for transaction in history:
+        if transaction.ledger_type.value == "debit":
+            debit_history.append(transaction)
+    if len(debit_history) <= 0:
+        return f"No debit history!"
+    return debit_history
+
+@router.get("/credit/history", status_code=status.HTTP_200_OK)
+def get_debit_account_history(current_user=Depends(AuthMiddleware), db: Session=Depends(get_db)):
+    current_user_account = db.query(accounts_model.Account).filter(accounts_model.Account.user_id == current_user.id).first()
+    if not current_user_account:
+        raise HTTPException(
+            status_code = status.HTTP_404_NOT_FOUND,
+            detail = "User account not found. Create a leverage tag or request for account number"
+        )
+    history = db.query(ledger_model.Ledger).filter(ledger_model.Ledger.user_account == current_user_account.id).all()
+    credit_history = []
+    for transaction in history:
+        if transaction.ledger_type.value == "credit":
+            credit_history.append(transaction)
+    if len(credit_history) <= 0:
+        return f"No credit history!"
+    return credit_history
