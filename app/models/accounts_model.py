@@ -21,3 +21,5 @@ class Account(Base):
     # sender_transaction = relationship("Transaction", foreign_keys="[Transaction.sender_acc_id]", cascade="all, delete", backref="accounts")
 
     # ledger_transaction = relationship("Ledger", foreign_keys="[Ledger.user_account]", cascade="all, delete", backref="accounts")
+
+    #TODO-possible reccords delete?
