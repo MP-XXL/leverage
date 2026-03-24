@@ -9,8 +9,9 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title = "Leverage",
-    version = "0.0.1 Beta"
+    title="Leverage",
+    description="A FinTech API for digital banking and peer-to-peer payments.",
+    version="0.0.1"
 )
 
 app.include_router(users_routes.router)

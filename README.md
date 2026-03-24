@@ -1,20 +1,37 @@
 # Leverage
 
-A modern financial technology (FinTech) application built with FastAPI that provides digital banking and peer-to-peer payment services.
+**Your gateway to financial freedom.** A modern FinTech application providing digital banking and peer-to-peer payment services.
 
-## 🚀 Features
+[![FastAPI](https://img.shields.io/badge/FastAPI-0.100+-009688?style=flat&logo=fastapi)](https://fastapi.tiangolo.com)
+[![Python](https://img.shields.io/badge/Python-3.13.8-3776AB?style=flat&logo=python)](https://python.org)
+[![MySQL](https://img.shields.io/badge/MySQL-8.0-4479A1?style=flat&logo=mysql)](https://mysql.com)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?style=flat&logo=docker)](https://docker.com)
+
+---
+
+## 🚀 Live Demo
+
+| Resource | URL |
+|----------|-----|
+| **API** | https://leverage-6elm.onrender.com |
+| **Swagger UI** | https://leverage-6elm.onrender.com/docs |
+| **ReDoc** | https://leverage-6elm.onrender.com/redoc |
+
+---
+
+## ✨ Features
 
 ### User Management
 - User registration and authentication
-- Profile management with image uploads
-- Role-based access control (user/admin)
-- KYC-style verification system (verified/pending/unverified)
+- Profile management with image uploads (Cloudinary)
+- Role-based access control (user / admin)
+- KYC-style verification system (verified / pending / unverified)
 
 ### Financial Services
-- **Digital Accounts**: Each user gets an account with balance tracking
-- **Leverage Tags**: Unique usernames for P2P transfers (like $cashtags)
-- **Transaction Types**: Deposits, withdrawals, transfers, card payments, charges
-- **Account Statuses**: Active, dormant, blocked
+- **Digital Accounts** — each user gets an account with balance tracking
+- **Leverage Tags** — unique usernames for P2P transfers (like $cashtags)
+- **Transaction Types** — deposits, withdrawals, transfers, card payments, charges
+- **Account Statuses** — active, dormant, blocked
 
 ### Transaction System
 - P2P transfers using leverage tags
@@ -22,23 +39,32 @@ A modern financial technology (FinTech) application built with FastAPI that prov
 - Transaction history and ledger tracking
 - Insufficient funds validation
 
+---
+
 ## 🛠 Technology Stack
 
-- **Backend**: FastAPI with Python 3.13.8
-- **Database**: MySQL 8.0 with SQLAlchemy ORM
-- **Authentication**: JWT tokens with bcrypt password hashing
-- **Infrastructure**: Docker containers with docker-compose
-- **Additional**: Cloudinary for image storage, phpMyAdmin for database management
+| Layer | Technology |
+|-------|-----------|
+| **Backend** | FastAPI with Python 3.13.8 |
+| **Database** | MySQL 8.0 with SQLAlchemy ORM |
+| **Authentication** | JWT tokens with bcrypt password hashing (12 rounds) |
+| **Infrastructure** | Docker & Docker Compose |
+| **Image Storage** | Cloudinary |
+| **DB Migrations** | Alembic |
+
+---
 
 ## 📋 Prerequisites
 
 - Docker and Docker Compose
-- Python 3.13.8 (for local development)
-- MySQL client (optional, for direct database access)
+- Python 3.13.8 (for local development without Docker)
+- A MySQL database (local or remote)
+
+---
 
 ## 🚀 Quick Start
 
-### Using Docker Compose (Recommended)
+### Using Docker Compose (Recommended for local development)
 
 1. **Clone the repository**
    ```bash
@@ -59,49 +85,59 @@ A modern financial technology (FinTech) application built with FastAPI that prov
 
 4. **Access the application**
    - API: http://localhost:8000
-   - API Documentation: http://localhost:8000/docs
-   - Database Admin (phpMyAdmin): http://localhost:8080
+   - Swagger UI: http://localhost:8000/docs
+   - phpMyAdmin: http://localhost:8080
 
-### Local Development
+---
+
+### Local Development (without Docker)
 
 1. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
 
-2. **Set up database**
+2. **Set up environment variables**
    ```bash
-   # Ensure MySQL is running and configured
-   # Run database migrations
+   cp .env.example .env
+   # Edit .env with your configuration
+   ```
+
+3. **Run database migrations**
+   ```bash
    alembic upgrade head
    ```
 
-3. **Start the application**
+4. **Start the application**
    ```bash
-   uvicorn main:app --reload --host 0.0.0.0 --port 8000
+   uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
    ```
+
+---
 
 ## 📚 API Documentation
 
-Once the application is running, visit:
+Once running, visit:
 - **Swagger UI**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
 
 ### Main API Endpoints
 
-| Endpoint | Description |
-|----------|-------------|
-| `POST /leverage/users` | User registration |
-| `POST /leverage/tags/users` | Create leverage tag |
-| `POST /leverage/accounts` | P2P transfers |
-| `POST /leverage/auth/login` | User authentication |
-| `GET /leverage/verification` | User verification status |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/leverage/users` | User registration |
+| `POST` | `/leverage/tags/users` | Create leverage tag |
+| `POST` | `/leverage/accounts` | P2P transfers |
+| `POST` | `/leverage/auth/login` | User authentication |
+| `GET` | `/leverage/verification` | User verification status |
+
+---
 
 ## 🔧 Configuration
 
 ### Environment Variables
 
-Create a `.env` file with the following variables:
+Copy `.env.example` to `.env` and fill in your values:
 
 ```env
 # Database Configuration
@@ -123,112 +159,146 @@ CLOUDINARY_API_KEY=your_api_key
 CLOUDINARY_API_SECRET=your_api_secret
 ```
 
+> ⚠️ **Never commit your `.env` file.** It is already listed in `.gitignore`.
+
+---
+
 ## 🏗 Project Structure
 
 ```
 leverage/
 ├── app/
+│   ├── alembic/          # Database migrations
+│   ├── auth/             # Authentication utilities
+│   ├── database/         # Database configuration
+│   ├── middlewares/      # Custom middlewares
 │   ├── models/           # SQLAlchemy models
 │   ├── routes/           # API route handlers
 │   ├── schemas/          # Pydantic models
-│   ├── database/         # Database configuration
-│   ├── auth/             # Authentication utilities
-│   ├── middlewares/      # Custom middlewares
-│   ├── alembic/          # Database migrations
-│   └── main.py           # FastAPI application entry
-├── docker-compose.yml    # Docker orchestration
-├── Dockerfile           # Container configuration
-├── requirements.txt     # Python dependencies
-└── .env                # Environment variables
+│   ├── enums.py          # Application enums
+│   └── main.py           # FastAPI application entry point
+├── docker-compose.yml    # Docker orchestration (local development)
+├── Dockerfile            # Container configuration
+├── requirements.txt      # Python dependencies
+├── alembic.ini           # Alembic configuration
+├── .env.example          # Environment variables template
+└── .gitignore
 ```
+
+---
 
 ## 🔐 Security Features
 
-- **JWT Authentication**: Secure token-based authentication
-- **Password Hashing**: bcrypt with 12 rounds for password security
-- **User Verification**: KYC-style verification system
-- **Input Validation**: Comprehensive input sanitization
-- **Account Status**: Account status validation for transactions
+- **JWT Authentication** — secure token-based authentication with expiration
+- **Password Hashing** — bcrypt with 12 rounds
+- **User Verification** — KYC-style verification required for transactions
+- **Input Validation** — Pydantic schema validation on all inputs
+- **Account Status Checks** — blocked/dormant accounts cannot transact
+
+---
 
 ## 💡 Core Concepts
 
 ### Leverage Tags
-Leverage tags are unique usernames that allow users to send money easily without needing account numbers. Similar to $cashtags on other platforms.
-
-### Account Types
-- **Regular Account Balance**: Traditional banking balance
-- **Leverage Balance**: Special balance for leverage-specific transactions
+Leverage tags are unique usernames that allow users to send money easily without needing account numbers — similar to $cashtags on Cash App.
 
 ### Verification Levels
-- **Unverified**: Basic access, limited functionality
-- **Pending**: Verification submitted, under review
-- **Verified**: Full access to all features
+| Level | Access |
+|-------|--------|
+| **Unverified** | Basic access, limited functionality |
+| **Pending** | Verification submitted, under review |
+| **Verified** | Full access to all features |
+
+### Account Statuses
+| Status | Description |
+|--------|-------------|
+| **Active** | Normal operation |
+| **Dormant** | Inactive account |
+| **Blocked** | Suspended, no transactions allowed |
+
+---
+
+## 📝 Database Migrations
+
+```bash
+# Apply all pending migrations
+alembic upgrade head
+
+# Create a new migration
+alembic revision --autogenerate -m "description of changes"
+
+# Rollback one migration
+alembic downgrade -1
+```
+
+---
+
+## 🚀 Deployment
+
+### Render (Current production setup)
+
+1. Push your code to GitHub
+2. Connect your repo on [render.com](https://render.com)
+3. Add all environment variables in the Render dashboard under **Environment**
+4. Set **Pre-Deploy Command**:
+   ```bash
+   alembic upgrade head
+   ```
+5. Render auto-deploys on every push to your main branch
+
+> **Note:** Render's free tier spins down after 15 minutes of inactivity. The first request after sleep may take 30–50 seconds to respond.
+
+---
 
 ## 🧪 Testing
 
 ```bash
-# Run tests (when implemented)
+# Run tests
 pytest
 
 # Run with coverage
 pytest --cov=app
 ```
 
-## 📝 Database Migrations
-
-```bash
-# Create new migration
-alembic revision --autogenerate -m "Description of changes"
-
-# Apply migrations
-alembic upgrade head
-
-# Rollback migration
-alembic downgrade -1
-```
-
-## 🚀 Deployment
-
-### Production Deployment
-
-1. **Set up production environment variables**
-2. **Configure SSL certificates**
-3. **Set up reverse proxy (nginx)**
-4. **Configure production database**
-5. **Deploy with Docker Compose**
-
-```bash
-docker-compose -f docker-compose.prod.yml up -d
-```
+---
 
 ## 🤝 Contributing
 
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
+2. Create a feature branch
+   ```bash
+   git checkout -b feature/amazing-feature
+   ```
+3. Commit your changes
+   ```bash
+   git commit -m "add amazing feature"
+   ```
+4. Push to the branch
+   ```bash
+   git push origin feature/amazing-feature
+   ```
 5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## 🆘 Support
-
-For support and questions:
-- Create an issue on GitHub
-- Contact the development team
-
-## 🎯 Roadmap
-
-- [ ] Mobile application
-- [ ] Advanced fraud detection
-- [ ] Interest-bearing accounts
-- [ ] Investment features
-- [ ] Multi-currency support
-- [ ] API rate limiting
-- [ ] Advanced analytics dashboard
 
 ---
 
-**Leverage** - Your gateway to financial freedom. We provide, Leverage!
+## 🎯 Roadmap
+
+- [ ] API rate limiting
+- [ ] Email notifications on transactions
+- [ ] Transaction PIN for extra security
+- [ ] Mobile application
+- [ ] Multi-currency support
+- [ ] Advanced fraud detection
+- [ ] Interest-bearing accounts
+- [ ] Investment features
+- [ ] Analytics dashboard
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License — see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Leverage** — We provide, Leverage!
